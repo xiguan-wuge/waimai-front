@@ -1,12 +1,7 @@
 <template>
   <div class="home">
     <header>
-      <van-nav-bar title="菜品订购" left-arrow @click-left="onClickLeft">
-        <template #right>
-          <!-- <img src="" /> -->
-          <van-icon name="cart-o" color="#F19029" />
-        </template>
-      </van-nav-bar>
+      <Header title="菜品订购" rightIcon="Order" ></Header>
     </header>
     <main>
       <aside class="nav">
@@ -22,7 +17,7 @@
             {{ nav.name }}
           </li>
         </ul>
-        <div class="nav-feedback">
+        <div class="nav-feedback" @click="goFeedback">
           <van-icon name="chat-o" color="#F19029" size="20" />
           <p>意见反馈</p>
         </div>
@@ -34,6 +29,7 @@
             class="food-detail van-hairline--bottom"
             v-for="(food, index) in foodType.list"
             :key="index"
+            @click="goDetail(food)"
           >
             <div class="food-img flex-center">
               <img :src="food.img" alt="" v-if="food.img" />
@@ -57,22 +53,39 @@
       </div>
     </main>
     <footer class="shopping-cart">
-      <ShopCart></ShopCart>
+      <ShopCart @handle="goOrder"></ShopCart>
     </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, computed, watch } from "vue";
-import useUserStore from '../store/cart'
+import type { Ref, ComputedRef } from 'vue'
+import useUserStore from '@/store/cart'
 import {changeCartCount, selectedCount} from '@/hooks/useCardListHook'
+import { useRouterHook } from "@/hooks/userRouterHook.ts";
+import { changeOrderStatus } from '@/hooks/useOrderHook.ts';
 import api from '@/api'
 
-import Stepper from "../components/Stepper.vue";
-import ShopCart from "../components/ShopCart.vue";
 
-function onClickLeft() {
-  console.log("onClickLeft");
+import Stepper from "@/components/Stepper.vue";
+import ShopCart from "@/components/ShopCart.vue";
+import Header from "@/components/Header.vue";
+
+export interface FoodType {
+  key: string
+  name: string
+  count: number
+  selectedCount?: number
+  price: number
+  praise: number
+  img: string | undefined
+}
+
+export interface FoodListType {
+  key: string
+  title: string
+  list: FoodType[]
 }
 
 const curNavKey = ref("1");
@@ -118,28 +131,25 @@ function handleClickNav(key: string) {
   curNavKey.value = key;
 }
 
-const foodList = ref([]);
+const foodList:Ref<FoodListType[]> = ref([]);
 
 const store = useUserStore()
-const cartList = computed(() => store.cartList)
+const cartList:ComputedRef<FoodType[]> = computed(() => store.cartList)
 const currentFoodKey = computed(() => store.currentFoodKey)
 const currentFoodCount = computed(() => store.currentFoodCount)
 watch(
   cartList, 
   (val) => {
-    // console.log('watch', val, val.length);
-    // console.log('key', currentFoodKey.value);
-    // console.log('count', currentFoodCount.value);
     if(val.length) {
         // 购物车新增
-        console.log('val-------------');
+        // console.log('val-------------');
         
         if(currentFoodKey.value === 'all') {
           foodList.value.forEach((item, ) => {
             item.list.forEach(food => {
               val.forEach(cart => {
                 if(food.key === cart.key) {
-                  changeCartCount(food, cart[selectedCount])
+                  changeCartCount(food, cart[selectedCount] || 0)
                 }
               })
             
@@ -170,19 +180,19 @@ watch(
     deep: true
   }
 )
-function handleStepper(food, count) {
+function handleStepper(food:FoodType, count:number) {
   store.changeCount(food, count)
 }
 
 function initFoodList() {
   return api.get('getFoodList')
-  .then(res => {
+  .then((res:any) => {
     console.log('res---', res);
     if(res && res.code === 0) {
       foodList.value = res.data
     }
   })
-  .catch(err => {
+  .catch((err: any) => {
     console.log('err--', err);
     
   })
@@ -190,11 +200,11 @@ function initFoodList() {
 
 function initCartList() {
   return api.get('getShopcartList')
-  .then(res => {
+  .then((res:any) => {
     console.log('getShopcartList-res',res);
     store.setCartList(res.data)
   })
-  .catch(err => {
+  .catch((err:any) => {
     console.log('getShopcartList-err', err);
     
   })
@@ -212,6 +222,37 @@ async function initHome() {
 initHome()
 // 接口请求
 
+
+const {router } = useRouterHook()
+
+function goDetail(food:FoodType) {
+  router.push({
+    path: '/detail',
+    query: {
+      foodKey: food.key
+    }
+  })
+}
+
+function goFeedback() {
+  router.push({
+    path: '/feedback',
+    query: {
+      title: '意见反馈',
+      type: 'feedback'
+    }
+  })
+}
+
+function goOrder(status: number) {
+  router.push({
+    path: '/order'
+  })
+  if(status === 1) {
+    changeOrderStatus(2)
+  }
+  
+}
 
 
 </script>
@@ -273,7 +314,6 @@ main {
   bottom: 0;
   width: 100%;
   height: 100px;
-  background: #2d313b;
   z-index: 1;
 }
 .content {

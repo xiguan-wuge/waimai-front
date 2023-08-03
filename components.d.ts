@@ -7,13 +7,17 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    Header: typeof import('./src/components/Header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShopCart: typeof import('./src/components/ShopCart.vue')['default']
     Stepper: typeof import('./src/components/Stepper.vue')['default']
+    TimePicker: typeof import('./src/components/TimePicker.vue')['default']
+    VanActionSheet: typeof import('vant/es')['ActionSheet']
     VanIcon: typeof import('vant/es')['Icon']
     VanNavBar: typeof import('vant/es')['NavBar']
-    VanStepper: typeof import('vant/es')['Stepper']
+    VanSwipe: typeof import('vant/es')['Swipe']
+    VanSwipeItem: typeof import('vant/es')['SwipeItem']
+    VanTimePicker: typeof import('vant/es')['TimePicker']
   }
 }

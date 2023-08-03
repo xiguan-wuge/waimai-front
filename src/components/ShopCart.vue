@@ -2,7 +2,7 @@
   <div class="shopcart">
     <div class="cart-content">
       <div class="cart" @click="toggleCart">
-        <div class="icon" :class="{'icon-nor': !cartCount}">
+        <div class="icon" :class="{ 'icon-nor': !cartCount }">
           <span class="count" v-show="cartCount">{{ cartCount }}</span>
         </div>
         <p class="price">
@@ -10,9 +10,15 @@
           <span class="price-nor" v-else>购物车是空的</span>
         </p>
       </div>
-      <div class="flex-center handle">{{ handleText }}</div>
+      <div class="handle" :class="{'handle-multi': !showSingle}" v-if="cartCount">
+        <div class="single flex-center" v-if="showSingle" @click="handle">{{ handleText }}</div>
+        <div class="multi" v-else>
+          <div class="multi-item flex-center" @click="revoke">撤销</div>
+          <div class="multi-item flex-center multi-edit" @click="edit">编辑</div>
+        </div>
+      </div>
     </div>
-    <transition>
+    <transition name="up">
       <div class="cart-list" v-show="showCart && cartCount">
         <p class="cart-title">
           <span class="cart-title-name">已选商品{{ cartCount }}件</span>
@@ -30,83 +36,107 @@
             <div class="name">{{ food.name }}</div>
             <div class="price">￥{{ food.price }}</div>
             <div class="food-handle">
-              <Stepper 
-                :model-value="food[selectedCount]" 
-                :max="food.count" 
-                @change="(count) => handleStepper(food, count)"></Stepper>
+              <Stepper
+                :model-value="food[selectedCount]"
+                :max="food.count"
+                @change="(count) => handleStepper(food, count)"
+              ></Stepper>
             </div>
           </div>
         </div>
       </div>
     </transition>
-    
-    <transition>
-      <div class="mask" v-show="showCart && cartCount" @click="toggleCart"></div>
+
+    <transition name="fade">
+      <div
+        class="mask"
+        v-show="showCart && cartCount"
+        @click="toggleCart"
+      ></div>
     </transition>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, ref, setTransitionHooks } from "vue";
-import {useCartListHook, selectedCount}  from '../hooks/useCardListHook.ts'
+import { computed, ref, watch } from "vue";
+import { useCartListHook, selectedCount } from "../hooks/useCardListHook.ts";
+import {
+  orderStatusMap,
+  curOrderStatus,
+  changeOrderStatus,
+  showSingleStatus,
+} from "../hooks/useOrderHook";
 
 import Stepper from "./Stepper.vue";
-const props = defineProps({
-  list: {
-    type: Array,
-    default: () => [
-      // {
-      //   name: "麻婆豆腐300g",
-      //   price: 28,
-      //   count: 23,
-      // },
-      // {
-      //   name: "咖喱牛肉300g",
-      //   price: 21,
-      //   count: 23,
-      // },
-    ],
-  },
-});
+
+const emit = defineEmits(['handle', 'edit', 'revoke'])
 
 const {
-  store,
   cartList,
-    currentFoodKey,
-    currentFoodCount,
-    handleStepper,
-    clearCart
-} = useCartListHook()
+  handleStepper,
+  clearCart,
+} = useCartListHook();
 
 const list = computed(() => {
   return cartList.value;
 });
 
 const cartCount = computed(() => {
-  let count = 0
-  list.value.forEach(item => {
-    count += item[selectedCount]
-  })
-  return count
+  let count = 0;
+  list.value.forEach((item) => {
+    count += item[selectedCount] || 0;
+  });
+  return count;
 });
 const totalPrice = computed(() => {
-  let price = 0
-  list.value.forEach(item => {
-    price += item[selectedCount] * item.price
-  })
-  return price
+  let price = 0;
+  list.value.forEach((item) => {
+    price += (item[selectedCount] || 0) * item.price;
+  });
+  return price;
 });
 
-const handleText = ref("去下单");
+const showSingle = computed(() => {
+  let bool = false;
+  console.log('curOrderStatus', curOrderStatus.value);
+  
+  bool = showSingleStatus(curOrderStatus.value)
+  return bool
+});
+const handleText = computed(() => {
+  return orderStatusMap[curOrderStatus.value + '']
+});
 
-const showCart = ref(false)
+watch(cartCount, (val, old) => {
+  console.log('cart-count-val', val, old);
+  if(val >= 1 && old === 0) {
+    changeOrderStatus(1)
+  } else if(old >= 1 && val === 0) {
+    changeOrderStatus(0)
+  }
+
+  console.log('status',curOrderStatus.value);
+  
+  
+})
+
+const showCart = ref(false);
 function toggleCart() {
-  showCart.value = !showCart.value
+  showCart.value = !showCart.value;
 }
 
-
 function handleClear() {
-  showCart.value = false
-  clearCart()
+  showCart.value = false;
+  clearCart();
+}
+
+function revoke() {
+  emit('revoke')
+}
+function edit() {
+  emit('edit')
+}
+function handle() {
+  emit('handle', curOrderStatus.value)
 }
 </script>
 
@@ -114,14 +144,16 @@ function handleClear() {
 .shopcart {
   width: 100vw;
   height: 100px;
-  background: #2d313b;
   display: flex;
   position: fixed;
-  z-index: 100;
+  bottom: 0;
 }
 .cart-content {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
+  background: #2d313b;
+  width: 100%;
+  display: flex;
 }
 .cart {
   flex: 1;
@@ -130,7 +162,7 @@ function handleClear() {
   padding: 22px 31px;
 }
 .icon {
-  background-image: url("../assets/images/icons/bottom_icon_shopping cart_sel.png");
+  background-image: url("../assets/images/icons/bottom_icon_shopping_cart_sel.png");
   background-repeat: no-repeat;
   background-size: contain;
   width: 61px;
@@ -138,7 +170,7 @@ function handleClear() {
   margin-right: 37px;
 }
 .icon-nor {
-  background-image: url("../assets/images/icons/bottom_icon_shopping cart_nor.png");
+  background-image: url("../assets/images/icons/bottom_icon_shopping_cart_nor.png");
 }
 .count {
   background: #f15a4a;
@@ -167,6 +199,24 @@ function handleClear() {
   font-size: 36px;
   color: #ffffff;
 }
+.handle-multi {
+  flex: 0 1 320px;
+}
+.single {
+  width: 100%;
+  height: 100%;
+}
+.multi {
+  display: flex;
+  height: 100%;
+}
+.multi-item {
+  flex: 1;
+  height: 100%;
+}
+.multi-edit {
+  background: #49B851;
+}
 
 .cart-list {
   position: absolute;
@@ -174,6 +224,7 @@ function handleClear() {
   left: 0;
   right: 0;
   z-index: 1;
+  transform: translate3d(0, 0, 0);
 }
 .cart-title {
   background: #f5f5f5;
@@ -222,14 +273,4 @@ function handleClear() {
   right: 20px;
 }
 
-.mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 0;
-  width: 100%;
-}
 </style>

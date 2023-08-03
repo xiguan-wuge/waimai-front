@@ -4,7 +4,7 @@
       class="sub flex-center"
       :class="{ dis: subDisable }"
       v-show="modelValue"
-      @click="handClick(false)"
+      @click.stop="handClick(false)"
     >
       -
     </div>
@@ -12,7 +12,7 @@
     <div
       class="add flex-center"
       :class="{ dis: addDisable }"
-      @click="handClick(true)"
+      @click.stop="handClick(true)"
     >
       +
     </div>

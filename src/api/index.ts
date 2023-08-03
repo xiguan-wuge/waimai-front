@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 import { apiMap } from "./apiMap";
 
-export const baseURL = "http://192.168.31.158:5173/";
+export const baseURL = "http://192.168.31.158:3000/";
 
 const instance = axios.create({
   baseURL,
@@ -17,18 +17,25 @@ type apiMap = {
   get: Function
   post: Function
 }
-const api:apiMap = {};
+const api:apiMap | Object = {};
 
-const methods = ["get", "post"];
+interface MethodsType {
+  get: string,
+  post: string
+}
+type MethodKey = keyof MethodsType
+
+const methods:MethodKey[] = ["get", "post"];
+
 methods.forEach((method: string) => {
-  api[method] = (url:string, data: Object | undefined, header?:Object) => {
+  api[method] = (url:string, data: Object | undefined) => {
 
     return new Promise((resolve, reject) => {
       let opt;
-      if (method === "fet") {
+      if (method === "get") {
         opt = { params: data };
       } else {
-        opt = qs.stringify();
+        opt = qs.stringify(opt);
       }
 
       instance({
@@ -64,5 +71,14 @@ methods.forEach((method: string) => {
     });
   };
 });
-
+export interface resType  {
+  code: number,
+  message: string,
+  data: any
+}
+export interface errType  {
+  code: number,
+  message: string,
+  data: any
+}
 export default api;
