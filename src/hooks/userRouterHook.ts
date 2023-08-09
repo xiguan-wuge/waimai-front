@@ -4,9 +4,9 @@ import type { Router } from 'vue-router'
 function back(router:Router) {
   router.back()
 }
-function goOrder(router:Router){
+function goMyOrder(router:Router){
   router.push({
-    path: '/order'
+    path: '/my-order'
   })
 }
 
@@ -18,6 +18,6 @@ export function useRouterHook() {
     router,
     routes,
     back: () => back(router),
-    goOrder: () => goOrder(router)
+    goMyOrder: () => goMyOrder(router)
   }
 }

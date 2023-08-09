@@ -50,7 +50,7 @@ const props = defineProps({
 
 const emit = defineEmits(["back", "right"]);
 
-const { router, routes, back, goOrder } = useRouterHook();
+const { back, goMyOrder } = useRouterHook();
 
 function onClickLeft() {
   console.log("onClickLeft");
@@ -66,7 +66,7 @@ function onRightClick() {
     emit('right')
   } else {
     if(props.rightIcon === 'Order') {
-      goOrder()
+      goMyOrder()
     }
   }
 }

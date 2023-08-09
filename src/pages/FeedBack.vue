@@ -28,7 +28,7 @@
 <script lang="ts" setup>
 import Header from "../components/Header.vue";
 import { showSuccessToast } from "vant";
-import "vant/es/toast/index.css";
+import "vant/es/toast/style/index.mjs";
 
 import { ref, computed } from "vue";
 import { useRouterHook } from "../hooks/userRouterHook";

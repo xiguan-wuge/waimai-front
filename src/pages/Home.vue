@@ -88,8 +88,16 @@ export interface FoodListType {
   list: FoodType[]
 }
 
-const curNavKey = ref("1");
+const curNavKey = ref("hot");
 const navList = ref([
+  {
+    name: "热销",
+    key: "hot",
+  },
+  {
+    name: "特卖",
+    key: "special",
+  },
   {
     name: "星期一",
     key: "1",
@@ -118,14 +126,7 @@ const navList = ref([
     name: "星期七",
     key: "7",
   },
-  {
-    name: "热销",
-    key: "hot",
-  },
-  {
-    name: "特卖",
-    key: "special",
-  },
+  
 ]);
 function handleClickNav(key: string) {
   curNavKey.value = key;

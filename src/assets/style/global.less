@@ -8,37 +8,7 @@
     width: 0px;
   }
 }
-// 自下向上 transition 
-// 目标元素需要设置 transform: translate3d(0, 0, 0);
-.up-enter-from,
-.up-leave-to {
-  transform: translate3d(0, 100%, 0);
-}
-.up-enter-active,
-.up-leave-active {
-  transition: all, 0.3s;
-}
 
-// 透明度变化，适用于遮罩层 配合 mask
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: all, 0.3s;
-}
-.mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 0;
-  width: 100%;
-  opacity: 1;
-}
 
 
 

@@ -3,5 +3,6 @@ type apiMapType = {
 }
 export const apiMap:apiMapType = {
   getFoodList: 'get/foodlist',
-  getShopcartList: 'get/shopcart/list'
+  getShopcartList: 'get/shopcart/list',
+  getMyOrder: 'get/myorder',
 }

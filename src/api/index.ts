@@ -17,7 +17,10 @@ type apiMap = {
   get: Function
   post: Function
 }
-const api:apiMap | Object = {};
+const api:apiMap = {
+  get: () => {},
+  post: () => {}
+};
 
 interface MethodsType {
   get: string,

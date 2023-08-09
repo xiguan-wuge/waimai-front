@@ -4,6 +4,8 @@ const Home = () => import('../pages/Home.vue')
 const Detail = () => import('../pages/Detail.vue')
 const Order = () => import('../pages/Order.vue')
 const Feedback = () => import('../pages/FeedBack.vue')
+const MyOrder = () => import('../pages/MyOrder.vue')
+const NotFound = () => import('@/pages/NotFound.vue')
 const routes = [
   {
     path: '/',
@@ -24,7 +26,18 @@ const routes = [
     path: '/feedback',
     name: 'Feedback',
     component: Feedback
+  },
+  {
+    path: '/my-order',
+    name: 'MyOrder',
+    component: MyOrder
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound
   }
+
 ]
 
 const router = createRouter({
