@@ -143,7 +143,6 @@ watch(
   (val) => {
     if(val.length) {
         // 购物车新增
-        // console.log('val-------------');
         
         if(currentFoodKey.value === 'all') {
           foodList.value.forEach((item, ) => {
