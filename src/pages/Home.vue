@@ -143,7 +143,6 @@ watch(
   (val) => {
     if(val.length) {
         // 购物车新增
-        
         if(currentFoodKey.value === 'all') {
           foodList.value.forEach((item, ) => {
             item.list.forEach(food => {
@@ -166,7 +165,6 @@ watch(
             }
           })
         })
-
     } else {
       // 购物车已清空
       foodList.value.forEach((item, ) => {
@@ -220,9 +218,8 @@ async function initHome() {
   }
 }
 initHome()
+
 // 接口请求
-
-
 const {router } = useRouterHook()
 
 function goDetail(food:FoodType) {
@@ -251,10 +248,7 @@ function goOrder(status: number) {
   if(status === 1) {
     changeOrderStatus(2)
   }
-  
 }
-
-
 </script>
 <style lang="less" scoped>
 .home {
