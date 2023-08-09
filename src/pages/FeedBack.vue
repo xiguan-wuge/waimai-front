@@ -33,9 +33,7 @@ import "vant/es/toast/style/index.mjs";
 import { ref, computed } from "vue";
 import { useRouterHook } from "../hooks/userRouterHook";
 
-const { router, routes, back } = useRouterHook();
-
-console.log("routes-----", router, routes);
+const { routes, back } = useRouterHook();
 
 const title = computed(() => {
   return routes.query.title + '' || '';
@@ -49,7 +47,6 @@ const placeholder = computed(() => {
 const text = ref("");
 const hasSubmit = ref(false);
 function handleRight() {
-  console.log("handleRight-提交");
   showSuccessToast("提交成功");
   hasSubmit.value = true;
 }
