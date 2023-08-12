@@ -6,7 +6,7 @@ import App from './App.vue'
 import router from './router'
 import pinia from './store'
 import { initMock } from './mock'
-import {getPerformance} from '@/performance/web-vitals'
+// import {getPerformance} from '@/performance/web-vitals'
 
 initMock()
 
@@ -25,4 +25,4 @@ app.use(pinia)
 app.mount('#app')
 
 // web-vitals  数据获取
-getPerformance()
+// getPerformance()
