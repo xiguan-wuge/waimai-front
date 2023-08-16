@@ -283,15 +283,6 @@ function handle() {
   transition: all, 0.3s;
 }
 
-// 透明度变化，适用于遮罩层 配合 mask
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: all, 0.3s;
-}
 .mask {
   position: fixed;
   top: 0;
@@ -302,5 +293,14 @@ function handle() {
   z-index: 0;
   width: 100%;
   opacity: 1;
+}
+// 透明度变化，适用于遮罩层 配合 mask
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all, 0.3s;
 }
 </style>
